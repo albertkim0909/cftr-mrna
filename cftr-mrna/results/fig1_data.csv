@@ -1,0 +1,169 @@
+group,gc_cds_percent,acc_kozak,cai,id
+코돈 분포 일치,48.41,0.7524,0.7553,match_codon_usage_gc55|hbb_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.7524,0.7553,match_codon_usage_gc55|hbb_5utr|kozak_used|prior_3utr
+코돈 분포 일치,48.41,0.7524,0.7553,match_codon_usage_gc55|hbb_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.41,0.5746,0.7553,match_codon_usage_gc55|minimal_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.6009,0.7553,match_codon_usage_gc55|minimal_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.41,0.5746,0.7553,match_codon_usage_gc55|minimal_5utr|kozak_used|prior_3utr
+코돈 분포 일치,48.41,0.6009,0.7553,match_codon_usage_gc55|minimal_5utr|kozak_strong|prior_3utr
+코돈 분포 일치,48.41,0.5746,0.7553,match_codon_usage_gc55|minimal_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.41,0.6009,0.7553,match_codon_usage_gc55|minimal_5utr|kozak_strong|hbb_3utr
+코돈 분포 일치,48.41,0.6605,0.7553,match_codon_usage_gc55|hba1_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.6605,0.7553,match_codon_usage_gc55|hba1_5utr|kozak_used|prior_3utr
+코돈 분포 일치,48.41,0.6605,0.7553,match_codon_usage_gc55|hba1_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.41,0.7111,0.7553,match_codon_usage_gc55|hbb_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.41,0.7111,0.7553,match_codon_usage_gc55|hbb_5utr|kozak_strong|prior_3utr
+코돈 분포 일치,48.41,0.7111,0.7553,match_codon_usage_gc55|hbb_5utr|kozak_strong|hbb_3utr
+코돈 분포 일치,48.41,0.6074,0.7553,match_codon_usage_gc55|hba1_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.41,0.6074,0.7553,match_codon_usage_gc55|hba1_5utr|kozak_strong|prior_3utr
+코돈 분포 일치,48.41,0.6074,0.7553,match_codon_usage_gc55|hba1_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,59.98,0.4028,0.9871,use_best_codon_gc60|hbb_5utr|kozak_used|hba1_3utr
+최빈 코돈 사용,59.98,0.4228,0.9871,use_best_codon_gc60|mrna1273_5utr|kozak_used|hba1_3utr
+최빈 코돈 사용,59.98,0.4028,0.9871,use_best_codon_gc60|hbb_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,59.98,0.4028,0.9871,use_best_codon_gc60|hbb_5utr|kozak_used|hbb_3utr
+최빈 코돈 사용,59.98,0.4228,0.9871,use_best_codon_gc60|mrna1273_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,59.98,0.4228,0.9871,use_best_codon_gc60|mrna1273_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.41,0.7353,0.7553,match_codon_usage_gc60|minimal_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.41,0.7353,0.7553,match_codon_usage_gc60|minimal_5utr|kozak_strong|prior_3utr
+코돈 분포 일치,48.41,0.7353,0.7553,match_codon_usage_gc60|minimal_5utr|kozak_strong|hbb_3utr
+코돈 분포 일치,48.41,0.674,0.7553,match_codon_usage_gc60|minimal_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.674,0.7553,match_codon_usage_gc60|minimal_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,59.98,0.3666,0.9871,use_best_codon_gc60|hba1_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.674,0.7553,match_codon_usage_gc60|minimal_5utr|kozak_used|hbb_3utr
+최빈 코돈 사용,57.98,0.4028,0.9593,use_best_codon_gc57|hbb_5utr|kozak_used|hba1_3utr
+최빈 코돈 사용,59.98,0.3666,0.9871,use_best_codon_gc60|hba1_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,59.98,0.3666,0.9871,use_best_codon_gc60|hba1_5utr|kozak_used|hbb_3utr
+최빈 코돈 사용,57.98,0.4228,0.9593,use_best_codon_gc57|mrna1273_5utr|kozak_used|hba1_3utr
+최빈 코돈 사용,57.98,0.4028,0.9593,use_best_codon_gc57|hbb_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,57.98,0.4028,0.9593,use_best_codon_gc57|hbb_5utr|kozak_used|hbb_3utr
+최빈 코돈 사용,57.98,0.4228,0.9593,use_best_codon_gc57|mrna1273_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,57.98,0.4228,0.9593,use_best_codon_gc57|mrna1273_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.41,0.7201,0.7553,match_codon_usage_gc60|hbb_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.7201,0.7553,match_codon_usage_gc60|hbb_5utr|kozak_used|prior_3utr
+코돈 분포 일치,48.41,0.7201,0.7553,match_codon_usage_gc60|hbb_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.41,0.5369,0.7553,match_codon_usage_gc55|mrna1273_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,57.98,0.3666,0.9593,use_best_codon_gc57|hba1_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.5369,0.7553,match_codon_usage_gc55|mrna1273_5utr|kozak_strong|prior_3utr
+코돈 분포 일치,48.41,0.5369,0.7553,match_codon_usage_gc55|mrna1273_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,57.98,0.3666,0.9593,use_best_codon_gc57|hba1_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,57.98,0.3666,0.9593,use_best_codon_gc57|hba1_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.41,0.5461,0.7553,match_codon_usage_gc55|mrna1273_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.5461,0.7553,match_codon_usage_gc55|mrna1273_5utr|kozak_used|prior_3utr
+코돈 분포 일치,48.41,0.5461,0.7553,match_codon_usage_gc55|mrna1273_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.41,0.686,0.7553,match_codon_usage_gc60|hba1_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.686,0.7553,match_codon_usage_gc60|hba1_5utr|kozak_used|prior_3utr
+코돈 분포 일치,48.41,0.686,0.7553,match_codon_usage_gc60|hba1_5utr|kozak_used|hbb_3utr
+최빈 코돈 사용,59.98,0.2593,0.9871,use_best_codon_gc60|hbb_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,59.98,0.2593,0.9871,use_best_codon_gc60|hbb_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,54.99,0.4028,0.9217,use_best_codon_gc55|hbb_5utr|kozak_used|hba1_3utr
+최빈 코돈 사용,59.98,0.2593,0.9871,use_best_codon_gc60|hbb_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,59.98,0.2522,0.9871,use_best_codon_gc60|hba1_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.44,0.6039,0.7555,match_codon_usage_gc57|minimal_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.6869,0.7553,match_codon_usage_gc60|hbb_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,54.99,0.4228,0.9217,use_best_codon_gc55|mrna1273_5utr|kozak_used|hba1_3utr
+최빈 코돈 사용,59.98,0.2771,0.9871,use_best_codon_gc60|minimal_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,54.99,0.4028,0.9217,use_best_codon_gc55|hbb_5utr|kozak_used|prior_3utr
+코돈 분포 일치,48.44,0.6498,0.7555,match_codon_usage_gc57|minimal_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.44,0.6039,0.7555,match_codon_usage_gc57|minimal_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,54.99,0.4028,0.9217,use_best_codon_gc55|hbb_5utr|kozak_used|hbb_3utr
+최빈 코돈 사용,59.98,0.2522,0.9871,use_best_codon_gc60|hba1_5utr|kozak_strong|prior_3utr
+코돈 분포 일치,48.41,0.6869,0.7553,match_codon_usage_gc60|hbb_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,59.98,0.2522,0.9871,use_best_codon_gc60|hba1_5utr|kozak_strong|hbb_3utr
+코돈 분포 일치,48.44,0.6039,0.7555,match_codon_usage_gc57|minimal_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.44,0.6498,0.7555,match_codon_usage_gc57|minimal_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,59.98,0.2622,0.9871,use_best_codon_gc60|mrna1273_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.41,0.6869,0.7553,match_codon_usage_gc60|hbb_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,59.98,0.2771,0.9871,use_best_codon_gc60|minimal_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,54.99,0.4228,0.9217,use_best_codon_gc55|mrna1273_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,54.99,0.4228,0.9217,use_best_codon_gc55|mrna1273_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.44,0.6786,0.7555,match_codon_usage_gc57|hba1_5utr|kozak_used|hba1_3utr
+최빈 코돈 사용,59.98,0.2771,0.9871,use_best_codon_gc60|minimal_5utr|kozak_strong|hbb_3utr
+코돈 분포 일치,48.44,0.6498,0.7555,match_codon_usage_gc57|minimal_5utr|kozak_strong|hbb_3utr
+야생형 (비최적화),41.53,0.7295,0.6933,wildtype|minimal_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.44,0.6786,0.7555,match_codon_usage_gc57|hba1_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,59.98,0.2622,0.9871,use_best_codon_gc60|mrna1273_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,59.98,0.2622,0.9871,use_best_codon_gc60|mrna1273_5utr|kozak_strong|hbb_3utr
+코돈 분포 일치,48.44,0.6786,0.7555,match_codon_usage_gc57|hba1_5utr|kozak_used|hbb_3utr
+야생형 (비최적화),41.53,0.6704,0.6933,wildtype|minimal_5utr|kozak_used|hba1_3utr
+야생형 (비최적화),41.53,0.7295,0.6933,wildtype|minimal_5utr|kozak_strong|prior_3utr
+야생형 (비최적화),41.53,0.7295,0.6933,wildtype|minimal_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,57.98,0.2593,0.9593,use_best_codon_gc57|hbb_5utr|kozak_strong|hba1_3utr
+야생형 (비최적화),41.53,0.6704,0.6933,wildtype|minimal_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,54.99,0.3666,0.9217,use_best_codon_gc55|hba1_5utr|kozak_used|hba1_3utr
+야생형 (비최적화),41.53,0.6704,0.6933,wildtype|minimal_5utr|kozak_used|hbb_3utr
+최빈 코돈 사용,57.98,0.2593,0.9593,use_best_codon_gc57|hbb_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,57.98,0.2593,0.9593,use_best_codon_gc57|hbb_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,57.98,0.2522,0.9593,use_best_codon_gc57|hba1_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,54.99,0.3666,0.9217,use_best_codon_gc55|hba1_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,54.99,0.3666,0.9217,use_best_codon_gc55|hba1_5utr|kozak_used|hbb_3utr
+최빈 코돈 사용,57.98,0.2771,0.9593,use_best_codon_gc57|minimal_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,57.98,0.2522,0.9593,use_best_codon_gc57|hba1_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,57.98,0.2522,0.9593,use_best_codon_gc57|hba1_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,57.98,0.2622,0.9593,use_best_codon_gc57|mrna1273_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,57.98,0.2771,0.9593,use_best_codon_gc57|minimal_5utr|kozak_strong|prior_3utr
+야생형 (비최적화),41.53,0.7326,0.6933,wildtype|hbb_5utr|kozak_used|hba1_3utr
+최빈 코돈 사용,57.98,0.2771,0.9593,use_best_codon_gc57|minimal_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,59.98,0.2203,0.9871,use_best_codon_gc60|minimal_5utr|kozak_used|hba1_3utr
+최빈 코돈 사용,57.98,0.2622,0.9593,use_best_codon_gc57|mrna1273_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,57.98,0.2622,0.9593,use_best_codon_gc57|mrna1273_5utr|kozak_strong|hbb_3utr
+코돈 분포 일치,48.44,0.5962,0.7555,match_codon_usage_gc57|hbb_5utr|kozak_used|hba1_3utr
+야생형 (비최적화),41.53,0.7326,0.6933,wildtype|hbb_5utr|kozak_used|prior_3utr
+야생형 (비최적화),41.53,0.7326,0.6933,wildtype|hbb_5utr|kozak_used|hbb_3utr
+최빈 코돈 사용,59.98,0.2203,0.9871,use_best_codon_gc60|minimal_5utr|kozak_used|prior_3utr
+코돈 분포 일치,48.44,0.5962,0.7555,match_codon_usage_gc57|hbb_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,59.98,0.2203,0.9871,use_best_codon_gc60|minimal_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.44,0.5962,0.7555,match_codon_usage_gc57|hbb_5utr|kozak_used|hbb_3utr
+야생형 (비최적화),41.53,0.7062,0.6933,wildtype|hba1_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.44,0.6209,0.7555,match_codon_usage_gc57|hba1_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.44,0.6209,0.7555,match_codon_usage_gc57|hba1_5utr|kozak_strong|prior_3utr
+야생형 (비최적화),41.53,0.7062,0.6933,wildtype|hba1_5utr|kozak_used|prior_3utr
+야생형 (비최적화),41.53,0.7062,0.6933,wildtype|hba1_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.44,0.6209,0.7555,match_codon_usage_gc57|hba1_5utr|kozak_strong|hbb_3utr
+야생형 (비최적화),41.53,0.7028,0.6933,wildtype|hba1_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,57.98,0.2203,0.9593,use_best_codon_gc57|minimal_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.6034,0.7553,match_codon_usage_gc60|hba1_5utr|kozak_strong|hba1_3utr
+야생형 (비최적화),41.53,0.7028,0.6933,wildtype|hba1_5utr|kozak_strong|prior_3utr
+코돈 분포 일치,48.41,0.6034,0.7553,match_codon_usage_gc60|hba1_5utr|kozak_strong|prior_3utr
+야생형 (비최적화),41.53,0.7028,0.6933,wildtype|hba1_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,57.98,0.2203,0.9593,use_best_codon_gc57|minimal_5utr|kozak_used|prior_3utr
+코돈 분포 일치,48.41,0.6034,0.7553,match_codon_usage_gc60|hba1_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,57.98,0.2203,0.9593,use_best_codon_gc57|minimal_5utr|kozak_used|hbb_3utr
+최빈 코돈 사용,54.99,0.2593,0.9217,use_best_codon_gc55|hbb_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,54.99,0.2593,0.9217,use_best_codon_gc55|hbb_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,54.99,0.2593,0.9217,use_best_codon_gc55|hbb_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,54.99,0.2522,0.9217,use_best_codon_gc55|hba1_5utr|kozak_strong|hba1_3utr
+야생형 (비최적화),41.53,0.7068,0.6933,wildtype|hbb_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,54.99,0.2771,0.9217,use_best_codon_gc55|minimal_5utr|kozak_strong|hba1_3utr
+최빈 코돈 사용,54.99,0.2522,0.9217,use_best_codon_gc55|hba1_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,54.99,0.2522,0.9217,use_best_codon_gc55|hba1_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,54.99,0.2622,0.9217,use_best_codon_gc55|mrna1273_5utr|kozak_strong|hba1_3utr
+야생형 (비최적화),41.53,0.7068,0.6933,wildtype|hbb_5utr|kozak_strong|prior_3utr
+야생형 (비최적화),41.53,0.7068,0.6933,wildtype|hbb_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,54.99,0.2771,0.9217,use_best_codon_gc55|minimal_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,54.99,0.2771,0.9217,use_best_codon_gc55|minimal_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,54.99,0.2622,0.9217,use_best_codon_gc55|mrna1273_5utr|kozak_strong|prior_3utr
+최빈 코돈 사용,54.99,0.2622,0.9217,use_best_codon_gc55|mrna1273_5utr|kozak_strong|hbb_3utr
+코돈 분포 일치,48.44,0.5467,0.7555,match_codon_usage_gc57|hbb_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.44,0.5467,0.7555,match_codon_usage_gc57|hbb_5utr|kozak_strong|prior_3utr
+코돈 분포 일치,48.44,0.5467,0.7555,match_codon_usage_gc57|hbb_5utr|kozak_strong|hbb_3utr
+최빈 코돈 사용,54.99,0.2203,0.9217,use_best_codon_gc55|minimal_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.435,0.7553,match_codon_usage_gc60|mrna1273_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.41,0.435,0.7553,match_codon_usage_gc60|mrna1273_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,54.99,0.2203,0.9217,use_best_codon_gc55|minimal_5utr|kozak_used|prior_3utr
+최빈 코돈 사용,54.99,0.2203,0.9217,use_best_codon_gc55|minimal_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.41,0.435,0.7553,match_codon_usage_gc60|mrna1273_5utr|kozak_used|hbb_3utr
+코돈 분포 일치,48.44,0.4515,0.7555,match_codon_usage_gc57|mrna1273_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.41,0.4574,0.7553,match_codon_usage_gc60|mrna1273_5utr|kozak_strong|hba1_3utr
+코돈 분포 일치,48.44,0.4515,0.7555,match_codon_usage_gc57|mrna1273_5utr|kozak_strong|prior_3utr
+코돈 분포 일치,48.44,0.4515,0.7555,match_codon_usage_gc57|mrna1273_5utr|kozak_strong|hbb_3utr
+코돈 분포 일치,48.41,0.4574,0.7553,match_codon_usage_gc60|mrna1273_5utr|kozak_strong|prior_3utr
+코돈 분포 일치,48.41,0.4574,0.7553,match_codon_usage_gc60|mrna1273_5utr|kozak_strong|hbb_3utr
+코돈 분포 일치,48.44,0.4336,0.7555,match_codon_usage_gc57|mrna1273_5utr|kozak_used|hba1_3utr
+코돈 분포 일치,48.44,0.4336,0.7555,match_codon_usage_gc57|mrna1273_5utr|kozak_used|prior_3utr
+코돈 분포 일치,48.44,0.4336,0.7555,match_codon_usage_gc57|mrna1273_5utr|kozak_used|hbb_3utr
+야생형 (비최적화),41.53,0.472,0.6933,wildtype|mrna1273_5utr|kozak_strong|hba1_3utr
+야생형 (비최적화),41.53,0.472,0.6933,wildtype|mrna1273_5utr|kozak_strong|prior_3utr
+야생형 (비최적화),41.53,0.472,0.6933,wildtype|mrna1273_5utr|kozak_strong|hbb_3utr
+야생형 (비최적화),41.53,0.4657,0.6933,wildtype|mrna1273_5utr|kozak_used|hba1_3utr
+야생형 (비최적화),41.53,0.4657,0.6933,wildtype|mrna1273_5utr|kozak_used|prior_3utr
+야생형 (비최적화),41.53,0.4657,0.6933,wildtype|mrna1273_5utr|kozak_used|hbb_3utr

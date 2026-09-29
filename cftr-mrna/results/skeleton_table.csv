@@ -1,0 +1,4 @@
+rank,id,score,acc_kozak,dG_init,cai,acc_mean,gc_cds
+1,use_best_codon_gc60|mrna1273_5utr|kozak_used|prior_3utr,0.5381,0.4228,-37.7,0.9873,0.4525,0.5998
+2,wildtype|hba1_5utr|kozak_used|prior_3utr,0.5,0.7062,-30.5,0.6933,0.4756,0.4153
+3,use_best_codon_gc60|hba1_5utr|kozak_used|prior_3utr,0.4956,0.3666,-38.0,0.9873,0.449,0.5998

@@ -1,0 +1,47 @@
+======================================================================
+[1/3] 후보 생성
+참조 6070 nt / CDS 4443 nt / 단백질 1480 aa — 검증 통과
+  use_best_codon_gc55              GC 0.550  변경 20.9%   1.6s
+  use_best_codon_gc57              GC 0.580  변경 23.4%   1.5s
+  use_best_codon_gc60              GC 0.600  변경 25.1%   1.4s
+  match_codon_usage_gc55           GC 0.484  변경  7.4%   8.3s
+  match_codon_usage_gc57           GC 0.484  변경  7.4%   7.7s
+  match_codon_usage_gc60           GC 0.484  변경  7.6%   8.2s
+  후보 168개
+
+[2/3] 지표 계산 (후보당 약 4.5초)
+    10/168  경과  1.3분  남은 예상 21.2분
+    20/168  경과  2.2분  남은 예상 15.9분
+    30/168  경과  2.9분  남은 예상 13.5분
+    40/168  경과  3.7분  남은 예상 11.9분
+    50/168  경과  4.5분  남은 예상 10.6분
+    60/168  경과  5.3분  남은 예상  9.5분
+    70/168  경과  6.0분  남은 예상  8.4분
+    80/168  경과  6.9분  남은 예상  7.6분
+    90/168  경과  7.7분  남은 예상  6.6분
+   100/168  경과  8.5분  남은 예상  5.8분
+   110/168  경과  9.3분  남은 예상  4.9분
+   120/168  경과 10.1분  남은 예상  4.0분
+   130/168  경과 10.9분  남은 예상  3.2분
+   140/168  경과 11.8분  남은 예상  2.4분
+   150/168  경과 12.6분  남은 예상  1.5분
+   160/168  경과 13.5분  남은 예상  0.7분
+   168/168  경과 14.1분  남은 예상  0.0분
+
+[3/3] 점수화
+
+순위   후보                                                             점수     개시부    CAI     GC
+--------------------------------------------------------------------------------------------
+1     match_codon_usage_gc55|hbb_5utr|kozak_used|hba1_3utr       0.635   0.752  0.755  0.484
+2     match_codon_usage_gc55|hbb_5utr|kozak_used|prior_3utr      0.632   0.752  0.755  0.484
+3     match_codon_usage_gc55|hbb_5utr|kozak_used|hbb_3utr        0.631   0.752  0.755  0.484
+4     match_codon_usage_gc55|minimal_5utr|kozak_used|hba1_3utr   0.624   0.575  0.755  0.484
+5     match_codon_usage_gc55|minimal_5utr|kozak_strong|hba1_3u   0.623   0.601  0.755  0.484
+6     match_codon_usage_gc55|minimal_5utr|kozak_used|prior_3ut   0.620   0.575  0.755  0.484
+7     match_codon_usage_gc55|minimal_5utr|kozak_strong|prior_3   0.620   0.601  0.755  0.484
+8     match_codon_usage_gc55|minimal_5utr|kozak_used|hbb_3utr    0.619   0.575  0.755  0.484
+9     match_codon_usage_gc55|minimal_5utr|kozak_strong|hbb_3ut   0.619   0.601  0.755  0.484
+10    match_codon_usage_gc55|hba1_5utr|kozak_used|hba1_3utr      0.618   0.660  0.755  0.484
+
+저장: /home/claude/cftr-mrna/results/candidates_scored.csv
+총 14.1분

@@ -20,6 +20,11 @@ POLY_A = 120
 CODON_METHODS = ["use_best_codon", "match_codon_usage"]
 GC_CAPS = [0.55, 0.58, 0.60]
 
+# 개시부 GC 제약 — AUG 직후 구간은 구조가 풀려 있어야 리보솜이 진입한다.
+# (하한, 상한, 구간 길이). None으로 두면 제약을 끄고 기존 설계와 동일해진다.
+INIT_GC = (0.35, 0.50)
+INIT_GC_WINDOW = 50
+
 
 def load_reference():
     rec = SeqIO.read(DATA / "reference" / "cftr_ref_mrna.fasta", "fasta")
@@ -45,18 +50,30 @@ def load_utr_library():
     return lib
 
 
-def optimize_cds(cds, protein, method, gc_cap):
-    """코돈 최적화 — 아미노산 서열 보존을 제약으로 강제한다."""
+def optimize_cds(cds, protein, method, gc_cap, init_gc=INIT_GC):
+    """코돈 최적화 — 아미노산 서열 보존을 제약으로 강제한다.
+
+    init_gc=(하한, 상한)이면 AUG 직후 INIT_GC_WINDOW nt에 더 낮은 GC 범위를
+    따로 적용한다. None이면 적용하지 않는다(단일 변인 비교용).
+    """
+    constraints = [
+        EnforceTranslation(),
+        EnforceGCContent(mini=0.40, maxi=gc_cap),
+        EnforceGCContent(mini=0.25, maxi=0.75, window=50),
+        AvoidPattern("AAAAAAAAA"), AvoidPattern("TTTTTTTTT"),
+        AvoidPattern("GGGGGGGGG"), AvoidPattern("CCCCCCCCC"),
+        AvoidHairpins(stem_size=10, hairpin_window=60),
+    ]
+    if init_gc is not None:
+        # 이 함수에 들어오는 서열이 CDS 그 자체이므로 위치 0이 곧 AUG다
+        constraints.append(
+            EnforceGCContent(mini=init_gc[0], maxi=init_gc[1],
+                             location=(0, INIT_GC_WINDOW))
+        )
+
     problem = DnaOptimizationProblem(
         sequence=cds,
-        constraints=[
-            EnforceTranslation(),
-            EnforceGCContent(mini=0.40, maxi=gc_cap),
-            EnforceGCContent(mini=0.25, maxi=0.75, window=50),
-            AvoidPattern("AAAAAAAAA"), AvoidPattern("TTTTTTTTT"),
-            AvoidPattern("GGGGGGGGG"), AvoidPattern("CCCCCCCCC"),
-            AvoidHairpins(stem_size=10, hairpin_window=60),
-        ],
+        constraints=constraints,
         objectives=[CodonOptimize(species="h_sapiens", method=method)],
         logger=None,
     )
@@ -84,8 +101,11 @@ def build_candidates(methods=None, caps=None, keep=None):
         t = time.time()
         variants[key] = optimize_cds(cds, protein, method, cap)
         gc = (variants[key].count("G") + variants[key].count("C")) / len(variants[key])
+        head = variants[key][:INIT_GC_WINDOW]
+        gc_init = (head.count("G") + head.count("C")) / len(head)
         changed = sum(a != b for a, b in zip(cds, variants[key])) / len(cds)
-        print(f"  {key:32s} GC {gc:.3f}  변경 {changed:5.1%}  {time.time()-t:4.1f}s")
+        print(f"  {key:32s} GC {gc:.3f}  개시부GC {gc_init:.3f}  "
+              f"변경 {changed:5.1%}  {time.time()-t:4.1f}s")
     variants["wildtype"] = cds          # 대조군: 최적화하지 않은 원본
 
     # 2) UTR 조합

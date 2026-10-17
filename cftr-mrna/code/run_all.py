@@ -39,6 +39,7 @@ def main(quick=False):
         m = metrics.compute(c)
         rows.append({"id": c["id"], "cds_variant": c["cds_variant"],
                      "utr5": c["utr5"], "kozak": c["kozak"], "utr3": c["utr3"],
+                     "is_control": c.get("is_control", False),
                      "metrics": m})
         if i % 10 == 0 or i == len(cands):
             el = time.time() - t0
@@ -50,24 +51,38 @@ def main(quick=False):
 
     # 저장
     csv_path = RESULTS / ("candidates_quick.csv" if quick else "candidates_scored.csv")
-    cols = ["rank", "id", "score", "cds_variant", "utr5", "kozak", "utr3"] + METRIC_COLS
+    cols = (["rank", "id", "score", "is_control", "would_rank",
+             "cds_variant", "utr5", "kozak", "utr3"] + METRIC_COLS)
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(cols)
         for r in rows:
             w.writerow([r["rank"], r["id"], round(r["score"], 4),
+                        r["is_control"], r.get("would_rank", ""),
                         r["cds_variant"], r["utr5"], r["kozak"], r["utr3"]] +
                        [round(r["metrics"][k], 4) for k in METRIC_COLS])
     with open(RESULTS / "candidates_scored.json", "w") as f:
         json.dump(rows, f)
 
-    # 상위 10개 출력
+    # 상위 10개 출력 (정상 후보만)
+    main = [r for r in rows if not r["is_control"]]
+    ctrl = [r for r in rows if r["is_control"]]
     print(f"\n{'순위':<5}{'후보':<58}{'점수':>7}{'개시부':>8}{'CAI':>7}{'GC':>7}")
     print("-" * 92)
-    for r in rows[:10]:
+    for r in main[:10]:
         m = r["metrics"]
         print(f"{r['rank']:<6}{r['id'][:56]:<58}{r['score']:6.3f}"
               f"{m['acc_kozak']:8.3f}{m['cai']:7.3f}{m['gc_cds']:7.3f}")
+
+    # 음성 대조군 — 순위에는 넣지 않고, 끼워 넣었다면 몇 위였을지만 본다
+    if ctrl:
+        best = ctrl[0]
+        print(f"\n음성 대조군 {len(ctrl)}개 (순위 제외)")
+        print(f"  최고 점수 {best['score']:.3f} — 정상 후보 {len(main)}개 중 "
+              f"{best['would_rank']}위에 해당 ({best['id'][:56]})")
+        if best["would_rank"] <= max(5, len(main) // 10):
+            print("  경고: 대조군이 상위권에 올라와 있다. "
+                  "점수 체계가 나쁜 3'UTR을 걸러내지 못하고 있다는 뜻이다.")
 
     print(f"\n저장: {csv_path}")
     print(f"총 {(time.time()-t0)/60:.1f}분")

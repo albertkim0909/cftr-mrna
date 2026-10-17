@@ -22,18 +22,33 @@ def normalize(values):
 
 
 def score_all(rows):
-    """rows: [{'id':..., 'metrics': {...}}, ...] — 각 row에 score와 norm을 채워 넣는다."""
+    """rows: [{'id':..., 'metrics': {...}}, ...] — 각 row에 score와 norm을 채워 넣는다.
+
+    is_control=True인 행은 음성 대조군이다. 정규화 기준(최소·최대)은 정상 후보만으로
+    잡고 대조군에는 같은 기준을 적용한다. 대조군이 기준 범위를 벗어나면 점수가
+    0~1 밖으로 나올 수 있는데, 그 자체가 판별 결과이므로 자르지 않는다.
+    순위는 정상 후보에만 매기고, 대조군에는 would_rank(끼워 넣었다면 몇 위인지)를 적는다.
+    """
+    main = [r for r in rows if not r.get("is_control")]
+    ctrl = [r for r in rows if r.get("is_control")]
+    ref = main or rows
+
     for key, direction, _ in WEIGHTS:
-        vals = [r["metrics"][key] for r in rows]
-        norm = normalize(vals)
-        if direction < 0:
-            norm = [1 - v for v in norm]
-        for r, v in zip(rows, norm):
-            r.setdefault("norm", {})[key] = v
+        vals = [r["metrics"][key] for r in ref]
+        lo, hi = min(vals), max(vals)
+        span = hi - lo
+        for r in rows:
+            v = 0.5 if span < 1e-12 else (r["metrics"][key] - lo) / span
+            r.setdefault("norm", {})[key] = 1 - v if direction < 0 else v
 
     for r in rows:
         r["score"] = sum(w * r["norm"][k] for k, _, w in WEIGHTS)
-    rows.sort(key=lambda r: -r["score"])
-    for rank, r in enumerate(rows, 1):
+
+    main.sort(key=lambda r: -r["score"])
+    for rank, r in enumerate(main, 1):
         r["rank"] = rank
-    return rows
+    ctrl.sort(key=lambda r: -r["score"])
+    for r in ctrl:
+        r["rank"] = None
+        r["would_rank"] = sum(1 for m in main if m["score"] > r["score"]) + 1
+    return main + ctrl

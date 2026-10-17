@@ -30,7 +30,10 @@ def load_reference():
     rec = SeqIO.read(DATA / "reference" / "cftr_ref_mrna.fasta", "fasta")
     full = str(rec.seq).upper()
     cds = full[CDS_START:CDS_END]
-    protein = str(SeqIO.read(DATA / "reference" / "cftr_protein.fasta", "fasta").seq)
+    prot_path = DATA / "reference" / "cftr_protein.fasta"
+    if not prot_path.exists():                      # 저장소에는 .fasta.txt로 들어 있다
+        prot_path = prot_path.with_suffix(".fasta.txt")
+    protein = str(SeqIO.read(prot_path, "fasta").seq)
 
     assert len(cds) % 3 == 0, "CDS가 3의 배수가 아님"
     assert cds.startswith("ATG"), "ATG로 시작하지 않음"
@@ -41,12 +44,14 @@ def load_reference():
 
 
 def load_utr_library():
-    lib = {"5UTR": [], "KOZAK": [], "3UTR": []}
+    """region 열을 그대로 키로 쓴다. 3UTR_CONTROL은 음성 대조군 구역이다."""
+    lib = {"5UTR": [], "KOZAK": [], "3UTR": [], "3UTR_CONTROL": []}
     with open(DATA / "elements" / "utr_library.csv", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            lib[row["region"]].append({"id": row["id"],
-                                       "seq": row["sequence"].strip().upper(),
-                                       "source": row["source"]})
+            region = row["region"]
+            lib.setdefault(region, []).append({"id": row["id"],
+                                               "seq": row["sequence"].strip().upper(),
+                                               "source": row["source"]})
     return lib
 
 
@@ -108,18 +113,22 @@ def build_candidates(methods=None, caps=None, keep=None):
               f"변경 {changed:5.1%}  {time.time()-t:4.1f}s")
     variants["wildtype"] = cds          # 대조군: 최적화하지 않은 원본
 
-    # 2) UTR 조합
+    # 2) UTR 조합 — 정상 후보와 음성 대조군을 나눠 만든다.
+    #    대조군은 점수 체계가 나쁜 3'UTR을 걸러내는지 확인하는 용도이므로
+    #    is_control로 표시만 하고, 순위 집계에는 섞지 않는다.
     candidates = []
-    for cds_id, cds_seq in variants.items():
-        for u5, koz, u3 in itertools.product(lib["5UTR"], lib["KOZAK"], lib["3UTR"]):
-            seq = u5["seq"] + koz["seq"] + cds_seq + u3["seq"] + "A" * POLY_A
-            candidates.append({
-                "id": f"{cds_id}|{u5['id']}|{koz['id']}|{u3['id']}",
-                "cds_variant": cds_id, "utr5": u5["id"],
-                "kozak": koz["id"], "utr3": u3["id"],
-                "cds_start": len(u5["seq"]) + len(koz["seq"]),   # AUG의 0-based 위치
-                "length": len(seq), "sequence": seq,
-            })
+    for region, is_control in (("3UTR", False), ("3UTR_CONTROL", True)):
+        for cds_id, cds_seq in variants.items():
+            for u5, koz, u3 in itertools.product(lib["5UTR"], lib["KOZAK"], lib[region]):
+                seq = u5["seq"] + koz["seq"] + cds_seq + u3["seq"] + "A" * POLY_A
+                candidates.append({
+                    "id": f"{cds_id}|{u5['id']}|{koz['id']}|{u3['id']}",
+                    "cds_variant": cds_id, "utr5": u5["id"],
+                    "kozak": koz["id"], "utr3": u3["id"],
+                    "is_control": is_control,
+                    "cds_start": len(u5["seq"]) + len(koz["seq"]),   # AUG의 0-based 위치
+                    "length": len(seq), "sequence": seq,
+                })
     return candidates
 
 

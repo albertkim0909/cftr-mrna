@@ -43,7 +43,7 @@ def main():
     print("-" * 99)
     for r in rows:
         m = r["metrics"]
-        print(f"{r['rank']:<6}{r['id'][:44]:<46}{r['score']:6.3f}"
+        print(f"{str(r['rank'] or '대조군'):<6}{r['id'][:44]:<46}{r['score']:6.3f}"
               f"{m['acc_kozak']:10.3f}{m['dG_init']:9.1f}{m['cai']:7.3f}"
               f"{m['acc_mean']:9.3f}{m['gc_cds']:7.3f}")
 

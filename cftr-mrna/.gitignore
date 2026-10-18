@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+
+# 재생성 가능한 중간 산출물
+results/metrics_cache*.jsonl
+results/run_all_*.log

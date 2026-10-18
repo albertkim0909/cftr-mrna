@@ -34,17 +34,38 @@ def main(quick=False):
         c["cds_len"] = CDS_LEN
     print(f"  후보 {len(cands)}개")
 
-    print(f"\n[2/3] 지표 계산 (후보당 약 4.5초)")
+    # 이어 달리기 — 계산이 끝난 후보는 cache에 한 줄씩 적어 두고 재실행 때 건너뛴다.
+    # 난수 시드가 고정돼 있어 같은 id는 같은 서열을 뜻한다.
+    cache_path = RESULTS / ("metrics_cache_quick.jsonl" if quick else "metrics_cache.jsonl")
+    done = {}
+    if cache_path.exists():
+        with open(cache_path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    r = json.loads(line)
+                    done[r["id"]] = r
+        print(f"  이어 달리기: 기존 {len(done)}건 재사용")
+
+    print(f"\n[2/3] 지표 계산 (후보당 약 2.6초)")
     rows = []
+    cache_f = open(cache_path, "a", encoding="utf-8")
     for i, c in enumerate(cands, 1):
+        if c["id"] in done:
+            rows.append(done[c["id"]])
+            continue
         m = metrics.compute(c)
-        rows.append({"id": c["id"], "cds_variant": c["cds_variant"],
-                     "utr5": c["utr5"], "kozak": c["kozak"], "utr3": c["utr3"],
-                     "metrics": m})
+        row = {"id": c["id"], "cds_variant": c["cds_variant"],
+               "utr5": c["utr5"], "kozak": c["kozak"], "utr3": c["utr3"],
+               "metrics": m}
+        rows.append(row)
+        cache_f.write(json.dumps(row) + "\n")
+        cache_f.flush()
         if i % 10 == 0 or i == len(cands):
             el = time.time() - t0
             print(f"  {i:4d}/{len(cands)}  경과 {el/60:4.1f}분  "
                   f"남은 예상 {(el/i)*(len(cands)-i)/60:4.1f}분")
+    cache_f.close()
 
     print("\n[3/3] 점수화")
     rows = score.score_all(rows)

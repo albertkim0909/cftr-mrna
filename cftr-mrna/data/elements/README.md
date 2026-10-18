@@ -26,6 +26,16 @@
 
 검사 대상 인식부위: XhoI(CTCGAG), NheI(GCTAGC), SalI(GTCGAC), SpeI(ACTAGT), BamHI(GGATCC), EcoRI(GAATTC), HindIII(AAGCTT), NotI(GCGGCCGC)
 
+## 내장 Kozak 처리 규칙
+
+일부 공개 5'UTR은 설계 단계에서 Kozak 서열까지 포함한 형태로 발표돼 있다. 이를 그대로 쓰고 `KOZAK` 칸을 덧붙이면 AUG 앞에 Kozak이 연달아 두 번 들어가 개시 간격이 어긋난다.
+
+1. 조립 모듈(`design.py`)이 5'UTR 끝을 라이브러리의 `KOZAK` 서열과 맞춰 보고, 일치하면 떼어낸 뒤 `KOZAK` 칸이 공급하도록 한다. 긴 모티프부터 맞춘다.
+2. 서열 **내부**에 나타나는 GCCACC는 AUG와 떨어져 있어 개시에 관여하지 않으므로 그대로 둔다 (제한효소 규칙 2와 같은 취지).
+3. 떼어낸 사실은 후보 기록의 `utr5_embedded_kozak` 항목에 남긴다. 떼어낸 5'UTR에 `kozak_used`를 붙이면 원본과 완전히 같은 서열이 되므로, 원본 설계안도 조합 안에 그대로 보존된다.
+
+적용 대상: `tpl_5utr_mod` (245 nt → 본체 239 nt, 떼어낸 것 GCCACC). 내부 127번 GCCACC는 보존. 다른 5'UTR은 해당 없음.
+
 ## 출처 유형 표기
 
 라이브러리 항목의 근거는 두 종류이며, 신뢰도가 다르므로 보고서에서 구분해 기술한다.

@@ -36,13 +36,39 @@ def load_reference():
 
 
 def load_utr_library():
+    """조립에 쓰는 세 칸(5UTR/KOZAK/3UTR)만 담는다.
+
+    3UTR_CONTROL(음성 대조군)은 전수 조합에서 제외하고 따로 보관한다.
+    4-1 비교 실험에서만 수동으로 투입한다.
+    """
     lib = {"5UTR": [], "KOZAK": [], "3UTR": []}
+    controls = []
     with open(DATA / "elements" / "utr_library.csv", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            lib[row["region"]].append({"id": row["id"],
-                                       "seq": row["sequence"].strip().upper(),
-                                       "source": row["source"]})
+            item = {"id": row["id"], "seq": row["sequence"].strip().upper(),
+                    "source": row["source"], "region": row["region"]}
+            if row["region"] in lib:
+                lib[row["region"]].append(item)
+            else:
+                controls.append(item)
+    if controls:
+        print(f"  조합 제외(대조군): {', '.join(c['id'] for c in controls)}")
+    lib["_controls"] = controls
     return lib
+
+
+def split_embedded_kozak(seq, kozak_motifs):
+    """5'UTR 끝에 Kozak 서열이 이미 붙어 있으면 떼어내 돌려준다.
+
+    일부 공개 5'UTR(예: tpl_5utr_mod)은 설계 단계에서 Kozak까지 포함해
+    발표돼 있다. 그대로 Kozak 칸을 덧붙이면 GCCACC가 두 번 들어가
+    AUG 앞 간격이 어긋나므로, 떼어낸 뒤 Kozak 칸이 공급하도록 한다.
+    가장 긴 모티프부터 맞춰 본다.
+    """
+    for motif in sorted(kozak_motifs, key=len, reverse=True):
+        if motif and seq.endswith(motif):
+            return seq[: -len(motif)], motif
+    return seq, None
 
 
 def optimize_cds(cds, protein, method, gc_cap):
@@ -74,8 +100,16 @@ def build_candidates(methods=None, caps=None, keep=None):
     cds, protein = load_reference()
     lib = load_utr_library()
     if keep:
-        for region in lib:
+        for region in ("5UTR", "KOZAK", "3UTR"):
             lib[region] = [x for x in lib[region] if x["id"] in keep] or lib[region]
+
+    # 0) 5'UTR에 이미 박혀 있는 Kozak 떼어내기 — 중복 삽입 방지
+    kozak_motifs = [k["seq"] for k in lib["KOZAK"]]
+    for u5 in lib["5UTR"]:
+        body, embedded = split_embedded_kozak(u5["seq"], kozak_motifs)
+        u5["seq"], u5["embedded_kozak"] = body, embedded
+        if embedded:
+            print(f"  {u5['id']}: 끝에 Kozak({embedded}) 내장 — 떼어내고 {len(body)} nt로 사용")
 
     # 1) CDS 변이체
     variants = {}
@@ -93,10 +127,16 @@ def build_candidates(methods=None, caps=None, keep=None):
     for cds_id, cds_seq in variants.items():
         for u5, koz, u3 in itertools.product(lib["5UTR"], lib["KOZAK"], lib["3UTR"]):
             seq = u5["seq"] + koz["seq"] + cds_seq + u3["seq"] + "A" * POLY_A
+            # AUG 바로 앞에 Kozak이 한 번만 오는지 — 5'UTR 본체가 또 Kozak으로
+            # 끝나면 연달아 두 번 들어간다. 서열 내부에 우연히 나타나는
+            # GCCACC는 AUG와 떨어져 있어 문제가 아니므로 접합부만 본다.
+            assert not any(u5["seq"].endswith(m) for m in kozak_motifs), \
+                f"{u5['id']}|{koz['id']}: AUG 앞에 Kozak이 연달아 두 번 삽입됨"
             candidates.append({
                 "id": f"{cds_id}|{u5['id']}|{koz['id']}|{u3['id']}",
                 "cds_variant": cds_id, "utr5": u5["id"],
                 "kozak": koz["id"], "utr3": u3["id"],
+                "utr5_embedded_kozak": u5.get("embedded_kozak"),
                 "cds_start": len(u5["seq"]) + len(koz["seq"]),   # AUG의 0-based 위치
                 "length": len(seq), "sequence": seq,
             })

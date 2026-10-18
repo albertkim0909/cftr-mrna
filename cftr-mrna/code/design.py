@@ -3,8 +3,9 @@
 참조 CFTR 서열에서 CDS를 추출하고, 코돈 최적화 방식과 GC 상한을 바꿔 가며
 CDS 변이체를 만든 뒤, UTR 라이브러리와 조합해 완결된 mRNA 후보를 생성한다.
 """
-import csv, itertools, json, time
+import csv, itertools, json, random, time
 from pathlib import Path
+import numpy as np
 from Bio import SeqIO
 from Bio.Seq import Seq
 from dnachisel import (DnaOptimizationProblem, EnforceTranslation, EnforceGCContent,
@@ -15,6 +16,7 @@ DATA, RESULTS = ROOT / "data", ROOT / "results"
 
 CDS_START, CDS_END = 70, 4513          # 0-based slice = 1-based 71..4513
 POLY_A = 120
+SEED = 20251018                        # match_codon_usage 재현성 확보용 난수 시드
 
 # 설계 축 — 여기를 늘리면 후보가 늘어난다
 CODON_METHODS = ["use_best_codon", "match_codon_usage"]
@@ -47,6 +49,11 @@ def load_utr_library():
         for row in csv.DictReader(f):
             item = {"id": row["id"], "seq": row["sequence"].strip().upper(),
                     "source": row["source"], "region": row["region"]}
+            if row["region"] == "5UTR" and not item["seq"]:
+                pass                      # minimal_5utr — Kozak만 쓰는 의도된 빈 칸
+            elif not item["seq"]:
+                print(f"  건너뜀(서열 비어 있음): {item['id']}")
+                continue
             if row["region"] in lib:
                 lib[row["region"]].append(item)
             else:
@@ -93,12 +100,23 @@ def optimize_cds(cds, protein, method, gc_cap):
     return opt
 
 
-def build_candidates(methods=None, caps=None, keep=None):
-    """methods/caps를 좁히거나 keep(허용 id 집합)을 주면 후보 수를 줄일 수 있다."""
+def build_candidates(methods=None, caps=None, keep=None, include_controls=False):
+    """methods/caps를 좁히거나 keep(허용 id 집합)을 주면 후보 수를 줄일 수 있다.
+
+    include_controls=True이면 3UTR_CONTROL(음성 대조군)도 3'UTR 칸에 넣어
+    전수 조합에 포함한다. 점수 체계가 양·불량을 구별하는지 검증할 때 쓴다.
+    """
     methods = methods or CODON_METHODS
     caps = caps or GC_CAPS
+    random.seed(SEED)
+    np.random.seed(SEED)
     cds, protein = load_reference()
     lib = load_utr_library()
+    if include_controls:
+        for c in lib["_controls"]:
+            if c["region"] == "3UTR_CONTROL":
+                lib["3UTR"].append(c)
+                print(f"  대조군 투입: {c['id']}")
     if keep:
         for region in ("5UTR", "KOZAK", "3UTR"):
             lib[region] = [x for x in lib[region] if x["id"] in keep] or lib[region]

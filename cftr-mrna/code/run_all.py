@@ -26,6 +26,7 @@ def main(quick=False):
     cands = design.build_candidates(
         methods=["use_best_codon"] if quick else None,
         caps=[0.60] if quick else None,
+        include_controls=True,      # prior_3utr(음성 대조군)을 전수 조합에 포함
     )
     if quick:
         cands = cands[::8]

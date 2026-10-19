@@ -42,7 +42,14 @@ def compute(candidate):
     out = {}
 
     # (1) 개시부 창 — MFE와 앙상블 자유에너지
-    w = seq[max(0, s - INIT_UP): s + INIT_DOWN]
+    # 창 길이를 INIT_UP+INIT_DOWN으로 고정한다. AUG 앞이 30 nt보다 짧은 후보
+    # (5'UTR 없이 Kozak만 쓰는 경우 등)는 앞쪽을 다 떼어낼 수 없어 창이 96~99 nt로
+    # 짧아졌고, 짧은 만큼 접힐 염기가 적어 MFE가 덜 음수로 나왔다. 이 지표는 덜
+    # 음수일수록 높은 점수를 주므로 5'UTR을 빼는 것만으로 유리해지는 왜곡이 있었다.
+    # 앞이 모자라는 만큼 뒤로 밀어 길이를 맞춘다.
+    win = INIT_UP + INIT_DOWN
+    start = max(0, s - INIT_UP)
+    w = seq[start: start + win]
     fc = RNA.fold_compound(w)
     _, mfe = fc.mfe()
     fc.exp_params_rescale(mfe)

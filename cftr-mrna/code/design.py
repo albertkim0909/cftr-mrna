@@ -3,8 +3,9 @@
 참조 CFTR 서열에서 CDS를 추출하고, 코돈 최적화 방식과 GC 상한을 바꿔 가며
 CDS 변이체를 만든 뒤, UTR 라이브러리와 조합해 완결된 mRNA 후보를 생성한다.
 """
-import csv, itertools, json, time
+import csv, itertools, json, random, time
 from pathlib import Path
+import numpy as np
 from Bio import SeqIO
 from Bio.Seq import Seq
 from dnachisel import (DnaOptimizationProblem, EnforceTranslation, EnforceGCContent,
@@ -15,6 +16,11 @@ DATA, RESULTS = ROOT / "data", ROOT / "results"
 
 CDS_START, CDS_END = 70, 4513          # 0-based slice = 1-based 71..4513
 POLY_A = 120
+
+# match_codon_usage는 사용 빈도 분포에서 코돈을 뽑으므로 실행할 때마다 다른 서열이
+# 나온다. 같은 후보의 개시부 MFE가 재실행 사이에 최대 12 이상 벌어져 순위가 바뀌었다.
+# 씨앗을 고정해 재현되게 한다. use_best_codon과 wildtype은 원래 결정적이다.
+SEED = 20251019
 
 # 설계 축 — 여기를 늘리면 후보가 늘어난다
 CODON_METHODS = ["use_best_codon", "match_codon_usage"]
@@ -92,6 +98,10 @@ def split_embedded_kozak(seq, kozak_motifs):
 
 def optimize_cds(cds, protein, method, gc_cap):
     """코돈 최적화 — 아미노산 서열 보존을 제약으로 강제한다."""
+    # 조합마다 같은 씨앗에서 출발시켜, 앞선 조합의 난수 소비가 뒤 결과를
+    # 바꾸지 않도록 한다(설계 축을 늘리거나 줄여도 각 서열이 그대로 나온다).
+    random.seed(SEED)
+    np.random.seed(SEED)
     problem = DnaOptimizationProblem(
         sequence=cds,
         constraints=[

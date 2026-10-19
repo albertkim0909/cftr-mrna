@@ -1,0 +1,7 @@
+metric,raw_value,normalized_value,mean_weight,contribution
+acc_kozak,0.607,0.727,0.3125,0.2273
+dG_init,-23.7,0.883,0.1875,0.1655
+cai,0.755,0.211,0.25,0.0527
+acc_start30,0.485,0.713,0.0875,0.0624
+acc_mean,0.465,0.333,0.1625,0.0542
+total,,,,0.5622

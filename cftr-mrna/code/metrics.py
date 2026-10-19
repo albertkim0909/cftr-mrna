@@ -57,6 +57,16 @@ def compute(candidate):
     out["acc_start30"] = sum(p[s: s + 30]) / 30
     out["acc_mean"] = sum(p) / len(p)
 
+    # (2-1) 구간별 평균 접근성
+    # 전체 평균 하나만 쓰면 CDS 4,443 nt에 3'UTR 수백 nt의 차이가 묻혀,
+    # 3'UTR만 다른 후보들의 점수가 사실상 같아진다. 구간을 나누어 희석을 막는다.
+    e = s + candidate.get("cds_len", 4443)          # CDS 끝(3'UTR 시작)
+    def _mean(seg):
+        return (sum(seg) / len(seg)) if seg else float("nan")
+    out["acc_utr5"] = _mean(p[:s])
+    out["acc_cds"] = _mean(p[s:e])
+    out["acc_utr3"] = _mean(p[e:])
+
     # (3) 서열 지표
     cds = seq[s: s + candidate.get("cds_len", 4443)]
     out["gc_cds"] = gc(cds)

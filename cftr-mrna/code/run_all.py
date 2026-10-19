@@ -16,7 +16,8 @@ RESULTS = Path(__file__).resolve().parent.parent / "results"
 CDS_LEN = design.CDS_END - design.CDS_START
 
 METRIC_COLS = ["acc_kozak", "dG_init", "efe_init", "cai",
-               "acc_start30", "acc_mean", "gc_cds", "gc_total", "length"]
+               "acc_start30", "acc_mean", "acc_utr5", "acc_cds", "acc_utr3",
+               "gc_cds", "gc_total", "length"]
 
 
 def main(quick=False, legacy168=False, controls=False):

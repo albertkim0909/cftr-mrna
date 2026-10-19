@@ -3,7 +3,7 @@
 참조 CFTR 서열에서 CDS를 추출하고, 코돈 최적화 방식과 GC 상한을 바꿔 가며
 CDS 변이체를 만든 뒤, UTR 라이브러리와 조합해 완결된 mRNA 후보를 생성한다.
 """
-import csv, itertools, json, random, time
+import csv, itertools, json, random, re, time
 from pathlib import Path
 import numpy as np
 from Bio import SeqIO
@@ -50,7 +50,17 @@ def load_reference():
     return cds, protein
 
 
-def load_utr_library():
+def has_polya_signal(seq):
+    """3'UTR에 폴리아데닐화 신호(AATAAA 또는 변이형 ATTAAA)가 있는지.
+
+    위치는 보지 않고 존재 여부만 본다. 생체 내에서 이 신호는 보통 3'UTR
+    말단 10~30 nt 이내에 오지만, BNT162b2 유래 서열은 끝에서 76 nt 앞에
+    있어 위치 조건을 걸면 실제 임상에서 쓰이는 서열이 탈락한다.
+    """
+    return re.search(r"A[AT]TAAA", seq) is not None
+
+
+def load_utr_library(require_polya=True):
     """조립에 쓰는 세 칸(5UTR/KOZAK/3UTR)만 담는다.
 
     3UTR_CONTROL(음성 대조군)은 전수 조합에서 제외하고 따로 보관한다.
@@ -60,15 +70,27 @@ def load_utr_library():
     빈 3'UTR을 그대로 조합하면 3'UTR이 없는 후보가 오류 없이 만들어져
     결과만 조용히 틀어진다. 5'UTR의 빈 서열(minimal_5utr)은 Kozak만 쓰는
     의도된 음성 대조군이므로 그대로 둔다.
+
+    require_polya=True면 폴리아데닐화 신호가 없는 3'UTR을 후보에서 뺀다.
+    구간별 접근성은 분해 효소의 접근 난이도를 재는 지표라 서열이 3'UTR로
+    기능할 수 있는지는 재지 못한다. 실제로 제한효소 자리만 모인 대조군
+    prior_3utr은 회문·고GC 서열이 단단히 접혀 접근성이 가장 낮게 나오고,
+    방향 부호가 음이므로 최고점을 받아 1위에 올랐다. 구조적 안정성과
+    기능적 적격성은 축이 다르므로 한 점수에 섞지 않고 제약으로 가른다.
+    False로 두면 제약 도입 전 상태를 재현할 수 있다.
     """
     lib = {"5UTR": [], "KOZAK": [], "3UTR": []}
-    controls, skipped = [], []
+    controls, skipped, no_pas = [], [], []
     with open(DATA / "elements" / "utr_library.csv", encoding="utf-8") as f:
         for row in csv.DictReader(f):
             item = {"id": row["id"], "seq": row["sequence"].strip().upper(),
                     "source": row["source"], "region": row["region"]}
-            if row["region"] == "3UTR" and not item["seq"]:
+            if row["region"].startswith("3UTR") and not item["seq"]:
                 skipped.append(item)
+                continue
+            if (row["region"].startswith("3UTR") and require_polya
+                    and not has_polya_signal(item["seq"])):
+                no_pas.append(item)
                 continue
             if row["region"] in lib:
                 lib[row["region"]].append(item)
@@ -76,9 +98,13 @@ def load_utr_library():
                 controls.append(item)
     if skipped:
         print(f"  미확보 제외(빈 3'UTR): {', '.join(s['id'] for s in skipped)}")
+    if no_pas:
+        print(f"  제약 탈락(폴리아데닐화 신호 없음): "
+              f"{', '.join(s['id'] for s in no_pas)}")
     if controls:
         print(f"  기본 조합 제외(대조군): {', '.join(c['id'] for c in controls)}")
     lib["_controls"] = controls
+    lib["_no_pas"] = no_pas
     return lib
 
 
@@ -122,16 +148,19 @@ def optimize_cds(cds, protein, method, gc_cap):
     return opt
 
 
-def build_candidates(methods=None, caps=None, keep=None, include_controls=False):
+def build_candidates(methods=None, caps=None, keep=None, include_controls=False,
+                     require_polya=True):
     """methods/caps를 좁히거나 keep(허용 id 집합)을 주면 후보 수를 줄일 수 있다.
 
     include_controls=True면 3UTR_CONTROL(음성 대조군)을 3'UTR 칸에 함께 넣어
     조합한다. 점수 체계가 기능 없는 3'UTR을 걸러 내는지 검증할 때 쓴다.
+    단 require_polya=True면 대조군은 그 제약에서 먼저 탈락하므로, 제약 도입
+    전 상태를 재현하려면 require_polya=False와 함께 써야 한다.
     """
     methods = methods or CODON_METHODS
     caps = caps or GC_CAPS
     cds, protein = load_reference()
-    lib = load_utr_library()
+    lib = load_utr_library(require_polya=require_polya)
     if include_controls and lib["_controls"]:
         lib["3UTR"] = lib["3UTR"] + lib["_controls"]
         print(f"  대조군 투입: {', '.join(c['id'] for c in lib['_controls'])}")

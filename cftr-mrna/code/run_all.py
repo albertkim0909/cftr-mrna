@@ -7,6 +7,7 @@
     python run_all.py --quick       # 축소판 (약 1분, 형식 점검용)
     python run_all.py --legacy168   # 확장 이전 168개 집합 재현 (대조군 자동 포함)
     python run_all.py --controls    # 음성 대조군(prior_3utr)을 조합에 포함
+    python run_all.py --no-polya    # 폴리아데닐화 신호 제약 해제(제약 도입 전 재현)
 """
 import csv, json, sys, time
 from pathlib import Path
@@ -20,7 +21,7 @@ METRIC_COLS = ["acc_kozak", "dG_init", "efe_init", "cai",
                "gc_cds", "gc_total", "length"]
 
 
-def main(quick=False, legacy168=False, controls=False):
+def main(quick=False, legacy168=False, controls=False, require_polya=True):
     t0 = time.time()
     RESULTS.mkdir(exist_ok=True)
 
@@ -32,6 +33,7 @@ def main(quick=False, legacy168=False, controls=False):
         caps=[0.60] if quick else None,
         keep=design.LEGACY_168 if legacy168 else None,
         include_controls=controls or legacy168,
+        require_polya=require_polya,
     )
     if quick:
         cands = cands[::8]
@@ -92,4 +94,5 @@ def main(quick=False, legacy168=False, controls=False):
 if __name__ == "__main__":
     main(quick="--quick" in sys.argv,
          legacy168="--legacy168" in sys.argv,
-         controls="--controls" in sys.argv)
+         controls="--controls" in sys.argv,
+         require_polya="--no-polya" not in sys.argv)

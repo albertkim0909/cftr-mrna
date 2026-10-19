@@ -20,6 +20,15 @@ POLY_A = 120
 CODON_METHODS = ["use_best_codon", "match_codon_usage"]
 GC_CAPS = [0.55, 0.58, 0.60]
 
+# UTR 라이브러리 확장 이전의 조합 집합. 4(5UTR) x 2(KOZAK) x 3(3UTR) x 7(CDS)
+# = 168개 후보로, 기존 순위표·델파이 집계가 모두 이 집합 위에서 만들어졌다.
+# prior_3utr이 들어 있으므로 include_controls=True와 함께 써야 재현된다.
+LEGACY_168 = {
+    "hba1_5utr", "hbb_5utr", "mrna1273_5utr", "minimal_5utr",
+    "kozak_strong", "kozak_used",
+    "hba1_3utr", "hbb_3utr", "prior_3utr",
+}
+
 
 def load_reference():
     rec = SeqIO.read(DATA / "reference" / "cftr_ref_mrna.fasta", "fasta")
@@ -39,20 +48,30 @@ def load_utr_library():
     """조립에 쓰는 세 칸(5UTR/KOZAK/3UTR)만 담는다.
 
     3UTR_CONTROL(음성 대조군)은 전수 조합에서 제외하고 따로 보관한다.
-    4-1 비교 실험에서만 수동으로 투입한다.
+    build_candidates(include_controls=True)로 검증 실행 때만 투입한다.
+
+    서열이 비어 있는 3'UTR 항목(아직 확보하지 못한 자리표시자)은 제외한다.
+    빈 3'UTR을 그대로 조합하면 3'UTR이 없는 후보가 오류 없이 만들어져
+    결과만 조용히 틀어진다. 5'UTR의 빈 서열(minimal_5utr)은 Kozak만 쓰는
+    의도된 음성 대조군이므로 그대로 둔다.
     """
     lib = {"5UTR": [], "KOZAK": [], "3UTR": []}
-    controls = []
+    controls, skipped = [], []
     with open(DATA / "elements" / "utr_library.csv", encoding="utf-8") as f:
         for row in csv.DictReader(f):
             item = {"id": row["id"], "seq": row["sequence"].strip().upper(),
                     "source": row["source"], "region": row["region"]}
+            if row["region"] == "3UTR" and not item["seq"]:
+                skipped.append(item)
+                continue
             if row["region"] in lib:
                 lib[row["region"]].append(item)
             else:
                 controls.append(item)
+    if skipped:
+        print(f"  미확보 제외(빈 3'UTR): {', '.join(s['id'] for s in skipped)}")
     if controls:
-        print(f"  조합 제외(대조군): {', '.join(c['id'] for c in controls)}")
+        print(f"  기본 조합 제외(대조군): {', '.join(c['id'] for c in controls)}")
     lib["_controls"] = controls
     return lib
 
@@ -93,12 +112,19 @@ def optimize_cds(cds, protein, method, gc_cap):
     return opt
 
 
-def build_candidates(methods=None, caps=None, keep=None):
-    """methods/caps를 좁히거나 keep(허용 id 집합)을 주면 후보 수를 줄일 수 있다."""
+def build_candidates(methods=None, caps=None, keep=None, include_controls=False):
+    """methods/caps를 좁히거나 keep(허용 id 집합)을 주면 후보 수를 줄일 수 있다.
+
+    include_controls=True면 3UTR_CONTROL(음성 대조군)을 3'UTR 칸에 함께 넣어
+    조합한다. 점수 체계가 기능 없는 3'UTR을 걸러 내는지 검증할 때 쓴다.
+    """
     methods = methods or CODON_METHODS
     caps = caps or GC_CAPS
     cds, protein = load_reference()
     lib = load_utr_library()
+    if include_controls and lib["_controls"]:
+        lib["3UTR"] = lib["3UTR"] + lib["_controls"]
+        print(f"  대조군 투입: {', '.join(c['id'] for c in lib['_controls'])}")
     if keep:
         for region in ("5UTR", "KOZAK", "3UTR"):
             lib[region] = [x for x in lib[region] if x["id"] in keep] or lib[region]

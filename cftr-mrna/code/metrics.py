@@ -67,12 +67,17 @@ def compute(candidate):
     # (2-1) 구간별 평균 접근성
     # 전체 평균 하나만 쓰면 CDS 4,443 nt에 3'UTR 수백 nt의 차이가 묻혀,
     # 3'UTR만 다른 후보들의 점수가 사실상 같아진다. 구간을 나누어 희석을 막는다.
+    # 3'UTR 구간에서 poly(A) 꼬리는 제외한다. 꼬리는 모든 후보가 공유하는
+    # 동일한 120 nt이고 거의 전 구간이 비결합 상태라 접근성이 높게 나오는데,
+    # 3'UTR이 짧을수록 구간에서 꼬리가 차지하는 비중이 커져(41 nt 후보는 약 4분의 3)
+    # 3'UTR 자체의 성질이 아니라 길이 비율이 점수를 가르게 된다.
     e = s + candidate.get("cds_len", 4443)          # CDS 끝(3'UTR 시작)
+    t = len(seq) - candidate.get("poly_a", 120)     # poly(A) 시작(3'UTR 끝)
     def _mean(seg):
         return (sum(seg) / len(seg)) if seg else float("nan")
     out["acc_utr5"] = _mean(p[:s])
     out["acc_cds"] = _mean(p[s:e])
-    out["acc_utr3"] = _mean(p[e:])
+    out["acc_utr3"] = _mean(p[e:t])
 
     # (3) 서열 지표
     cds = seq[s: s + candidate.get("cds_len", 4443)]

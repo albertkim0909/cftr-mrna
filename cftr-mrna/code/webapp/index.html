@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>치료용 mRNA 역설계</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#fff; --ink:#1a1a1a; --muted:#6b6b6b;
+    --line:#e2ddd5; --accent:#1f5f4f; --accent-soft:#e7f0ec; --warn:#8a5a00;
+    --warn-bg:#fdf6e6; --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#15171a; --panel:#1d2024; --ink:#eceae6; --muted:#9a9790;
+      --line:#2e3238; --accent:#6fbfa4; --accent-soft:#1e2d29; --warn:#e0b25f;
+      --warn-bg:#2a2317;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15171a; --panel:#1d2024; --ink:#eceae6; --muted:#9a9790;
+    --line:#2e3238; --accent:#6fbfa4; --accent-soft:#1e2d29; --warn:#e0b25f;
+    --warn-bg:#2a2317;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px;margin:0 auto;padding:40px 16px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:28px}
+  h1{font-size:1.45rem;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--muted);font-size:.9rem;margin:0}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:20px;margin-bottom:20px}
+  h2{font-size:1rem;margin:0 0 12px;letter-spacing:-.01em}
+  label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:6px}
+  textarea{width:100%;min-height:130px;padding:12px;border:1px solid var(--line);
+    border-radius:8px;background:var(--bg);color:var(--ink);font-family:var(--mono);
+    font-size:.8rem;resize:vertical}
+  textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  button{font:inherit;font-size:.88rem;padding:9px 16px;border-radius:7px;
+    border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) button.primary{color:#10211c}}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .opts{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:.84rem;color:var(--muted)}
+  .opts label{display:flex;gap:6px;align-items:center;margin:0;cursor:pointer}
+  .notice{background:var(--warn-bg);border:1px solid var(--line);border-left:3px solid var(--warn);
+    border-radius:6px;padding:11px 14px;font-size:.83rem;margin-bottom:10px;color:var(--ink)}
+  .bar{height:7px;background:var(--line);border-radius:4px;overflow:hidden;margin:10px 0 6px}
+  .bar > i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+  .status{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  table{width:100%;border-collapse:collapse;font-size:.8rem}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+  td.id{white-space:normal;font-family:var(--mono);font-size:.74rem;line-height:1.45}
+  tr.top td{background:var(--accent-soft)}
+  .scroll{overflow-x:auto;margin:0 -4px}
+  .charts{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:720px){.charts{grid-template-columns:1fr}}
+  .chart h3{font-size:.85rem;margin:0 0 4px}
+  .chart p{font-size:.78rem;color:var(--muted);margin:0 0 10px}
+  canvas{width:100%;height:auto;display:block}
+  .hide{display:none}
+  .err{color:#b3261e;font-size:.85rem;white-space:pre-wrap}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .err{color:#f2b8b5}}
+  footer{color:var(--muted);font-size:.78rem;border-top:1px solid var(--line);
+    padding-top:16px;margin-top:30px}
+  code{font-family:var(--mono);font-size:.8em;background:var(--accent-soft);
+    padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>치료용 mRNA 역설계</h1>
+  <p class="sub">목표 단백질 서열을 넣으면 코돈 최적화와 UTR 조합으로 후보를 생성하고,
+     구조 지표 일곱 개로 점수를 매겨 순위를 냅니다.</p>
+</header>
+
+<section class="panel">
+  <h2>입력</h2>
+  <label for="protein">목표 단백질 아미노산 서열 (FASTA 머리글은 있어도 됩니다)</label>
+  <textarea id="protein" spellcheck="false" placeholder="MSKGEELFTG..."></textarea>
+  <div class="opts">
+    <label><input type="checkbox" id="polya" checked> 폴리아데닐화 신호 제약 적용</label>
+    <label><input type="checkbox" id="merge" checked> 동일 서열 병합(판정 규칙 1번)</label>
+  </div>
+  <div class="row">
+    <button class="primary" id="run">실행</button>
+    <button id="cancel" class="hide">취소</button>
+    <button id="demo">예시 단백질 넣기</button>
+    <button id="cftr">CFTR 결과 보기(즉시)</button>
+  </div>
+  <div id="progress" class="hide">
+    <div class="bar"><i id="fill"></i></div>
+    <div class="status" id="status"></div>
+  </div>
+  <div id="error" class="err hide"></div>
+</section>
+
+<section id="results" class="hide">
+  <div class="panel" id="noticeBox"></div>
+
+  <div class="panel">
+    <h2>요약</h2>
+    <div class="status" id="summary"></div>
+  </div>
+
+  <div class="panel">
+    <h2>그래프</h2>
+    <div class="charts">
+      <div class="chart">
+        <h3>1위 후보의 지표별 기여도</h3>
+        <p>가중치 × 정규화값이 총점에서 차지하는 비율</p>
+        <canvas id="contrib" width="460" height="300"></canvas>
+      </div>
+      <div class="chart">
+        <h3>후보 전체 점수 분포</h3>
+        <p>가로축 점수, 세로축 후보 수. 붉은 선이 1위</p>
+        <canvas id="dist" width="460" height="300"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>상위 후보</h2>
+    <div class="scroll"><table id="table"></table></div>
+  </div>
+</section>
+
+<footer>
+  지표 일곱 개와 가중치, ⑤ 승계 비율 1:1:2, 폴리아데닐화 신호 제약, 1·2위 판정 규칙은
+  <code>results/delphi/final_1120/README.md</code>에 기록된 결정을 따릅니다.
+</footer>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const DEMO = `>sp|P00813|ADA_HUMAN Adenosine deaminase
+MAQTPAFDKPKVELHVHLDGSIKPETILYYGRRRGIALPANTAEGLLNVIGMDKPLTLPDFLAKFDYYMPAIAGCREAIKRIAYEFVEMKAKEGVVYVEVRYSPHLLANSKVEPIPWNQAEGDLTPDEVVALVGQGLQEGERDFGVKARSILCCMRHQPNWSPKVVELCKKYQQQTVVAIDLAGDETIPGSSLLPGHVQAYQEAVKSGIHRTVHAGEVGSAEVVKEAVDILKTERLGHGYHTLEDQALYNRLRQENMHFEICPWSSYLTGAWKPDTEHAVIRLKNDQANYSLNTDDPLIFKSTLDTDYQMTKRDMGFTEEEFKRLNINAAKSSFLPEDEKRELLDLLYKAYGMPPSASAGQNL`;
+let poll = null, jobId = null;
+
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+function show(el, on){ el.classList.toggle('hide', !on); }
+
+function setBusy(on){
+  $('run').disabled = on;
+  $('demo').disabled = on;
+  $('cftr').disabled = on;
+  show($('cancel'), on);
+  show($('progress'), on);
+}
+
+function fail(msg){
+  $('error').textContent = msg;
+  show($('error'), true);
+}
+
+const LABEL = {
+  acc_kozak:'① 개시부 접근성', dG_init:'② 개시부 자유에너지', cai:'③ 코돈 적응 지수',
+  acc_start30:'④ 개시 직후 접근성', acc_utr5:"⑤a 5'UTR 접근성",
+  acc_cds:'⑤b CDS 접근성', acc_utr3:"⑤c 3'UTR 접근성"
+};
+
+function drawContrib(items){
+  const c = $('contrib'), g = c.getContext('2d');
+  const W = c.width, H = c.height, padL = 150, padR = 48, padT = 10;
+  const rowH = (H - padT - 10) / items.length;
+  g.clearRect(0,0,W,H);
+  const max = Math.max(...items.map(d => d.share));
+  g.font = '12px system-ui, sans-serif';
+  items.forEach((d,i) => {
+    const y = padT + i*rowH, h = Math.max(8, rowH*0.56);
+    const w = (W - padL - padR) * (max ? d.share/max : 0);
+    g.fillStyle = css('--muted');
+    g.textAlign = 'right'; g.textBaseline = 'middle';
+    g.fillText(LABEL[d.metric] || d.metric, padL - 10, y + rowH/2);
+    g.fillStyle = css('--accent');
+    g.fillRect(padL, y + (rowH-h)/2, w, h);
+    g.fillStyle = css('--ink'); g.textAlign = 'left';
+    g.fillText((d.share*100).toFixed(1) + '%', padL + w + 8, y + rowH/2);
+  });
+}
+
+function drawDist(scores, best){
+  const c = $('dist'), g = c.getContext('2d');
+  const W = c.width, H = c.height, padL = 42, padR = 12, padT = 12, padB = 32;
+  g.clearRect(0,0,W,H);
+  if (!scores.length) return;
+  const lo = Math.min(...scores), hi = Math.max(...scores);
+  const bins = 36, span = (hi - lo) || 1;
+  const counts = new Array(bins).fill(0);
+  scores.forEach(s => {
+    const k = Math.min(bins-1, Math.floor((s - lo)/span * bins));
+    counts[k]++;
+  });
+  const maxC = Math.max(...counts);
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  g.strokeStyle = css('--line'); g.lineWidth = 1;
+  g.beginPath(); g.moveTo(padL, padT); g.lineTo(padL, padT+plotH);
+  g.lineTo(padL+plotW, padT+plotH); g.stroke();
+  g.fillStyle = css('--accent');
+  counts.forEach((n,i) => {
+    const h = plotH * (n/maxC), w = plotW/bins;
+    g.fillRect(padL + i*w + 0.5, padT + plotH - h, Math.max(1, w-1.5), h);
+  });
+  const bx = padL + plotW * ((best - lo)/span);
+  g.strokeStyle = '#c0392b'; g.lineWidth = 1.5;
+  g.beginPath(); g.moveTo(bx, padT); g.lineTo(bx, padT+plotH); g.stroke();
+  g.fillStyle = css('--muted'); g.font = '11px system-ui, sans-serif';
+  g.textAlign = 'left';  g.fillText(lo.toFixed(3), padL, H - 10);
+  g.textAlign = 'right'; g.fillText(hi.toFixed(3), padL+plotW, H - 10);
+  g.textAlign = 'right'; g.textBaseline = 'middle';
+  g.fillText(String(maxC), padL - 6, padT + 6);
+  g.fillText('0', padL - 6, padT + plotH);
+}
+
+function render(d){
+  $('noticeBox').innerHTML = d.notices.map(n => `<div class="notice">${n}</div>`).join('');
+
+  const w = Object.entries(d.weights)
+    .map(([k,v]) => `${LABEL[k]||k} ${v.toFixed(4)}`).join(' · ');
+  $('summary').innerHTML =
+    `단백질 ${d.protein_len} aa · 생성 후보 ${d.n_generated.toLocaleString()}개 · ` +
+    `순위 산출 ${d.n_ranked.toLocaleString()}개<br>` +
+    `1위 점수 ${d.top[0].score.toFixed(4)}` +
+    (d.top[1] ? ` · 2위와의 차 ${(d.top[0].score - d.top[1].score).toFixed(4)}` : '') +
+    `<br><span style="font-size:.78rem">가중치 — ${w}</span>` +
+    (d.source ? `<br><span style="font-size:.78rem">출처: ${d.source}</span>` : '');
+
+  const keys = ['acc_kozak','dG_init','cai','acc_start30','acc_utr5','acc_cds','acc_utr3'];
+  const head = '<tr><th>순위</th><th>후보</th><th>점수</th>' +
+    keys.map(k => `<th>${LABEL[k].split(' ')[0]}</th>`).join('') + '</tr>';
+  const body = d.top.map(r =>
+    `<tr${r.rank===1?' class="top"':''}><td class="num">${r.rank}</td>` +
+    `<td class="id">${r.id.replace(/\|/g,' | ')}</td>` +
+    `<td class="num">${r.score.toFixed(4)}</td>` +
+    keys.map(k => `<td class="num">${r.metrics[k].toFixed(3)}</td>`).join('') + '</tr>'
+  ).join('');
+  $('table').innerHTML = head + body;
+
+  drawContrib(d.contributions);
+  drawDist(d.scores, d.top[0].score);
+  show($('results'), true);
+  $('results').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+async function tick(){
+  const r = await fetch(`/api/job/${jobId}`);
+  const j = await r.json();
+  const pct = j.total ? Math.round(j.done/j.total*100) : 0;
+  $('fill').style.width = pct + '%';
+  $('status').textContent = `${j.message || ''}${j.total ? `  (${pct}%)` : ''}`;
+  if (j.state === 'done'){
+    clearInterval(poll); poll = null; setBusy(false);
+    $('fill').style.width = '100%';
+    render(j.result);
+  } else if (j.state === 'error'){
+    clearInterval(poll); poll = null; setBusy(false);
+    fail('실행 실패: ' + j.message);
+  }
+}
+
+$('run').onclick = async () => {
+  show($('error'), false); show($('results'), false);
+  const protein = $('protein').value.trim();
+  if (!protein){ fail('단백질 서열을 넣어 주세요.'); return; }
+  setBusy(true);
+  $('status').textContent = '후보 생성 준비 중';
+  $('fill').style.width = '0%';
+  try{
+    const r = await fetch('/api/run', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({protein, require_polya: $('polya').checked,
+                            merge_duplicates: $('merge').checked})
+    });
+    const j = await r.json();
+    if (!r.ok){ setBusy(false); fail(j.detail || '요청이 거부되었습니다.'); return; }
+    jobId = j.job_id;
+    poll = setInterval(tick, 1200);
+  }catch(e){ setBusy(false); fail(String(e)); }
+};
+
+$('cancel').onclick = async () => {
+  if (jobId) await fetch(`/api/job/${jobId}/cancel`, {method:'POST'});
+};
+
+$('demo').onclick = () => { $('protein').value = DEMO; };
+
+$('cftr').onclick = async () => {
+  show($('error'), false); show($('results'), false);
+  setBusy(true); $('status').textContent = '미리 계산해 둔 결과 불러오는 중';
+  $('fill').style.width = '60%';
+  try{
+    const r = await fetch('/api/example');
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.detail || '불러오지 못했습니다.');
+    $('fill').style.width = '100%';
+    render(j);
+  }catch(e){ fail(String(e)); }
+  finally{ setBusy(false); }
+};
+</script>
+</body>
+</html>

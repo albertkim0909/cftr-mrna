@@ -32,7 +32,7 @@
 | 파일 | 내용 |
 | --- | --- |
 | `candidate_metrics.csv` | 후보 20개 × 지표 5개(+GC)의 지표값 행렬. 집계 스크립트의 입력 |
-| `weights_round1.csv` | 응답자별 가중치 벡터. `submitted`는 각자 조사지에 적어 낸 값, `aggregated`는 취합 탭 표의 머리글에 적힌 값 |
+| `weights_round1.csv` | 응답자별 가중치 벡터. `submitted`는 각자 조사지에 적어 낸 값, `aggregated`는 취합 탭 표의 머리글에 적힌 값. `acc_mean_direction` 열은 `submitted` 행에서는 전원 `-`입니다(조사지가 "작을수록 유리"를 전제했고, 2026-10-16에 방향 부호를 합의 사항으로 −방향 통일 확정). `aggregated` 행의 `+`는 구버전 +방향 점수표에 딸린 표기를 그대로 보존한 것이며 판정에 쓰이지 않았습니다. 계산에서는 이 열을 참조하지 않습니다 — 방향은 `code/score.py`의 `METRIC_SETS`가 고정합니다 |
 | `rankings_weighted.csv` | 가중치별 순위표 5벌(네 사람 + 평균), 후보·순위·종합점수. 김도윤 표를 뺀 네 벌은 `acc_mean` +방향으로 계산된 구버전이며 `status=superseded`로 표시 |
 | `top5_by_respondent.csv` | −방향 통일 기준 응답자별 상위 5개. 판정에 쓰인 것은 이쪽 |
 | `top5_overlap.csv` | 상위 5위 기준 후보별 등장 횟수와 등장한 표 |

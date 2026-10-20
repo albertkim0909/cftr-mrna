@@ -1,0 +1,13 @@
+id,respondents,who,rank_양우진,rank_윤준우,rank_이지유,rank_김도윤,rank_평균
+use_best_codon_gc60|hbb_5utr|kozak_used|hba1_3utr,3,윤준우;이지유;김도윤,28,1,1,1,1
+use_best_codon_gc60|hbb_5utr|kozak_used|cyba_3utr,3,윤준우;이지유;김도윤,48,3,2,2,2
+use_best_codon_gc60|mrna1273_5utr|kozak_used|hba1_3utr,3,윤준우;이지유;김도윤,70,4,3,3,3
+use_best_codon_gc60|bnt162b2_5utr_trim|kozak_used|hba1_3utr,2,윤준우;김도윤,74,2,9,4,4
+use_best_codon_gc60|hbb_5utr|kozak_used|mtrnr1_emcv_3utr,2,이지유;김도윤,105,8,4,5,6
+match_codon_usage_gc55|hba1_5utr|kozak_used|hba1_3utr,1,양우진,1,47,69,18,11
+match_codon_usage_gc57|hba1_5utr|kozak_used|hba1_3utr,1,양우진,2,48,70,19,12
+match_codon_usage_gc60|hba1_5utr|kozak_used|hba1_3utr,1,양우진,3,49,71,20,13
+match_codon_usage_gc55|hba1_5utr|kozak_used|cyba_3utr,1,양우진,4,57,84,28,21
+match_codon_usage_gc57|hba1_5utr|kozak_used|cyba_3utr,1,양우진,5,58,85,29,22
+use_best_codon_gc60|hba1_5utr|kozak_used|hba1_3utr,1,윤준우,97,5,12,8,8
+use_best_codon_gc60|mrna1273_5utr|kozak_used|cyba_3utr,1,이지유,107,7,5,7,7

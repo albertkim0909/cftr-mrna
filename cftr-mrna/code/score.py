@@ -255,13 +255,17 @@ def stability_report(rows, weight_vectors, metric_set=DEFAULT_METRIC_SET,
     ranks = {who: _ranks(t) for who, t in tables.items()}
 
     tops = {who: [c for c, _ in t[:top_k]] for who, t in tables.items()}
+    people = [w for w in weight_vectors]
+
+    # 겹침은 응답자 본인 표로만 센다. 평균 표는 네 사람 가중치에서 산술적으로
+    # 파생된 값이라 독립된 한 표가 아니며, 이를 세면 다수 쪽 견해가 두 번
+    # 계산되어 "4명 전원"이라는 판정 기준이 사실과 어긋나게 된다.
     overlap = {}
-    for who, cs in tops.items():
-        for c in cs:
+    for who in people:
+        for c in tops[who]:
             overlap[c] = overlap.get(c, 0) + 1
     overlap = dict(sorted(overlap.items(), key=lambda kv: -kv[1]))
 
-    people = [w for w in weight_vectors]
     pairs = {f"{a}-{b}": {"spearman": spearman(ranks[a], ranks[b]),
                           "kendall": kendall_tau(ranks[a], ranks[b]),
                           "top_overlap": len(set(tops[a]) & set(tops[b]))}

@@ -1,0 +1,16 @@
+id,top5_entry_rate_seed0,n_draws,threshold,verdict
+use_best_codon_gc60|hbb_5utr|kozak_used|hba1_3utr,0.6040,2000,0.8,미달
+use_best_codon_gc60|tpl_5utr_mod|kozak_strong|hba1_3utr,0.4700,2000,0.8,미달
+use_best_codon_gc60|tpl_5utr_mod|kozak_used|hba1_3utr,0.2615,2000,0.8,미달
+use_best_codon_gc60|bnt162b2_5utr_trim|kozak_used|hba1_3utr,0.2525,2000,0.8,미달
+use_best_codon_gc57|tpl_5utr_mod|kozak_strong|hba1_3utr,0.2090,2000,0.8,미달
+use_best_codon_gc60|tpl_5utr_mod|kozak_strong|cyba_3utr,0.1850,2000,0.8,미달
+match_codon_usage_gc55|hba1_5utr|kozak_used|hba1_3utr,0.1705,2000,0.8,미달
+match_codon_usage_gc57|hba1_5utr|kozak_used|hba1_3utr,0.1650,2000,0.8,미달
+use_best_codon_gc57|hbb_5utr|kozak_used|hba1_3utr,0.1630,2000,0.8,미달
+use_best_codon_gc60|bnt162b2_5utr|kozak_used|hba1_3utr,0.1605,2000,0.8,미달
+match_codon_usage_gc60|hba1_5utr|kozak_used|hba1_3utr,0.1560,2000,0.8,미달
+use_best_codon_gc60|hbb_5utr|kozak_used|cyba_3utr,0.1500,2000,0.8,미달
+use_best_codon_gc60|minimal_5utr|kozak_used|hba1_3utr,0.1375,2000,0.8,미달
+use_best_codon_gc60|rabb_5utr|kozak_used|hba1_3utr,0.1220,2000,0.8,미달
+use_best_codon_gc60|hba1_5utr|kozak_used|hba1_3utr,0.1185,2000,0.8,미달

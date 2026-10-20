@@ -1,0 +1,9 @@
+pair,spearman_rho,kendall_tau,top5_overlap,common
+양우진-윤준우,0.568,0.408,0/5,
+양우진-이지유,0.616,0.449,0/5,
+양우진-김도윤,0.772,0.594,0/5,
+윤준우-이지유,0.861,0.695,3/5,use_best_codon_gc60|hbb_5utr|kozak_used|cyba_3utr;use_best_codon_gc60|hbb_5utr|kozak_used|hba1_3utr;use_best_codon_gc60|mrna1273_5utr|kozak_used|hba1_3utr
+윤준우-김도윤,0.912,0.779,4/5,use_best_codon_gc60|bnt162b2_5utr_trim|kozak_used|hba1_3utr;use_best_codon_gc60|hbb_5utr|kozak_used|cyba_3utr;use_best_codon_gc60|hbb_5utr|kozak_used|hba1_3utr;use_best_codon_gc60|mrna1273_5utr|kozak_used|hba1_3utr
+이지유-김도윤,0.951,0.815,4/5,use_best_codon_gc60|hbb_5utr|kozak_used|cyba_3utr;use_best_codon_gc60|hbb_5utr|kozak_used|hba1_3utr;use_best_codon_gc60|hbb_5utr|kozak_used|mtrnr1_emcv_3utr;use_best_codon_gc60|mrna1273_5utr|kozak_used|hba1_3utr
+평균 rho,0.780,,,
+Kendall's W,0.835,,,

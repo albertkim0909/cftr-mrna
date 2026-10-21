@@ -41,6 +41,23 @@ _jobs = {}
 _lock = threading.Lock()
 
 
+@app.exception_handler(Exception)
+def _any_error(request, exc):
+    """예상 못 한 오류도 JSON으로 돌려준다.
+
+    기본 처리는 평문 "Internal Server Error"를 보내는데, 프런트가 JSON으로
+    읽다가 SyntaxError만 띄우게 되어 진짜 원인이 터미널에만 남는다. 학교
+    발표 환경에서는 터미널을 못 볼 수도 있으므로 화면에 원인을 드러낸다.
+    """
+    # format_exc()는 핸들러 안에서 활성 예외가 없어 비어 나온다. 예외 객체에서
+    # 직접 추적을 뽑아야 한다.
+    trace = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"{type(exc).__name__}: {exc}", "trace": trace[-1500:]},
+    )
+
+
 class RunRequest(BaseModel):
     protein: str
     require_polya: bool = True

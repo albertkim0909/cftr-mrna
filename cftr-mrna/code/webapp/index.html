@@ -163,6 +163,19 @@ function fail(msg){
   show($('error'), true);
 }
 
+// 서버가 JSON이 아닌 응답(평문 500, HTML 오류 페이지)을 보낼 수 있다. 그대로
+// r.json()을 부르면 브라우저가 파싱 오류만 띄워 진짜 원인이 가려지므로,
+// 본문을 먼저 글자로 받아 두고 파싱에 실패하면 그 글자를 그대로 보여 준다.
+async function readJson(r){
+  const text = await r.text();
+  try{ return JSON.parse(text); }
+  catch(e){
+    throw new Error(`서버가 JSON이 아닌 응답을 보냈습니다 (HTTP ${r.status}).\n` +
+                    (text.slice(0, 500) || '(본문 없음)') +
+                    '\n\nuvicorn을 띄운 터미널의 오류 추적을 확인해 주세요.');
+  }
+}
+
 const LABEL = {
   acc_kozak:'① 개시부 접근성', dG_init:'② 개시부 자유에너지', cai:'③ 코돈 적응 지수',
   acc_start30:'④ 개시 직후 접근성', acc_utr5:"⑤a 5'UTR 접근성",
@@ -254,7 +267,7 @@ function render(d){
 
 async function tick(){
   const r = await fetch(`/api/job/${jobId}`);
-  const j = await r.json();
+  const j = await readJson(r);
   const pct = j.total ? Math.round(j.done/j.total*100) : 0;
   $('fill').style.width = pct + '%';
   $('status').textContent = `${j.message || ''}${j.total ? `  (${pct}%)` : ''}`;
@@ -281,8 +294,8 @@ $('run').onclick = async () => {
       body: JSON.stringify({protein, require_polya: $('polya').checked,
                             merge_duplicates: $('merge').checked})
     });
-    const j = await r.json();
-    if (!r.ok){ setBusy(false); fail(j.detail || '요청이 거부되었습니다.'); return; }
+    const j = await readJson(r);
+    if (!r.ok){ setBusy(false); fail(j.detail + (j.trace ? '\n\n' + j.trace : '')); return; }
     jobId = j.job_id;
     poll = setInterval(tick, 1200);
   }catch(e){ setBusy(false); fail(String(e)); }
@@ -300,8 +313,8 @@ $('cftr').onclick = async () => {
   $('fill').style.width = '60%';
   try{
     const r = await fetch('/api/example');
-    const j = await r.json();
-    if (!r.ok) throw new Error(j.detail || '불러오지 못했습니다.');
+    const j = await readJson(r);
+    if (!r.ok) throw new Error(j.detail + (j.trace ? '\n\n' + j.trace : ''));
     $('fill').style.width = '100%';
     render(j);
   }catch(e){ fail(String(e)); }

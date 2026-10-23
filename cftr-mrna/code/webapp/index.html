@@ -47,8 +47,6 @@
   button:disabled{opacity:.45;cursor:not-allowed}
   .opts{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:.84rem;color:var(--muted)}
   .opts label{display:flex;gap:6px;align-items:center;margin:0;cursor:pointer}
-  .notice{background:var(--warn-bg);border:1px solid var(--line);border-left:3px solid var(--warn);
-    border-radius:6px;padding:11px 14px;font-size:.83rem;margin-bottom:10px;color:var(--ink)}
   .bar{height:7px;background:var(--line);border-radius:4px;overflow:hidden;margin:10px 0 6px}
   .bar > i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
   .status{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -78,23 +76,23 @@
 
 <header>
   <h1>치료용 mRNA 역설계</h1>
-  <p class="sub">목표 단백질 서열을 넣으면 코돈 최적화와 UTR 조합으로 후보를 생성하고,
-     구조 지표 일곱 개로 점수를 매겨 순위를 냅니다.</p>
+  <p class="sub">목표 단백질 서열 → 코돈 최적화와 UTR 조합으로 후보 생성 →
+     구조 지표 일곱 개로 채점</p>
 </header>
 
 <section class="panel">
   <h2>입력</h2>
-  <label for="protein">목표 단백질 아미노산 서열 (FASTA 머리글은 있어도 됩니다)</label>
+  <label for="protein">목표 단백질 아미노산 서열 — FASTA 머리글 있어도 됨</label>
   <textarea id="protein" spellcheck="false" placeholder="MSKGEELFTG..."></textarea>
   <div class="opts">
-    <label><input type="checkbox" id="polya" checked> 폴리아데닐화 신호 제약 적용</label>
-    <label><input type="checkbox" id="merge" checked> 동일 서열 병합(판정 규칙 1번)</label>
+    <label><input type="checkbox" id="polya" checked> 폴리아데닐화 신호 제약</label>
+    <label><input type="checkbox" id="merge" checked> 동일 서열 병합</label>
   </div>
   <div class="row">
     <button class="primary" id="run">실행</button>
-    <button id="cancel" class="hide">취소</button>
-    <button id="demo">예시 단백질 넣기</button>
-    <button id="cftr">CFTR 결과 보기(즉시)</button>
+    <button id="cancel" class="hide">중단</button>
+    <button id="demo">예시 서열</button>
+    <button id="cftr">CFTR 결과 바로 보기</button>
   </div>
   <div id="progress" class="hide">
     <div class="bar"><i id="fill"></i></div>
@@ -104,8 +102,6 @@
 </section>
 
 <section id="results" class="hide">
-  <div class="panel" id="noticeBox"></div>
-
   <div class="panel">
     <h2>요약</h2>
     <div class="status" id="summary"></div>
@@ -135,7 +131,7 @@
 
 <footer>
   지표 일곱 개와 가중치, ⑤ 승계 비율 1:1:2, 폴리아데닐화 신호 제약, 1·2위 판정 규칙은
-  <code>results/delphi/final_1120/README.md</code>에 기록된 결정을 따릅니다.
+  <code>results/delphi/final_1120/README.md</code>의 결정을 따름
 </footer>
 
 </div>
@@ -170,9 +166,9 @@ async function readJson(r){
   const text = await r.text();
   try{ return JSON.parse(text); }
   catch(e){
-    throw new Error(`서버가 JSON이 아닌 응답을 보냈습니다 (HTTP ${r.status}).\n` +
+    throw new Error(`서버가 JSON이 아닌 응답을 보냄 (HTTP ${r.status}).\n` +
                     (text.slice(0, 500) || '(본문 없음)') +
-                    '\n\nuvicorn을 띄운 터미널의 오류 추적을 확인해 주세요.');
+                    '\n\nuvicorn 띄운 터미널의 오류 추적 확인.');
   }
 }
 
@@ -236,8 +232,6 @@ function drawDist(scores, best){
 }
 
 function render(d){
-  $('noticeBox').innerHTML = d.notices.map(n => `<div class="notice">${n}</div>`).join('');
-
   const w = Object.entries(d.weights)
     .map(([k,v]) => `${LABEL[k]||k} ${v.toFixed(4)}`).join(' · ');
   $('summary').innerHTML =
@@ -277,14 +271,14 @@ async function tick(){
     render(j.result);
   } else if (j.state === 'error'){
     clearInterval(poll); poll = null; setBusy(false);
-    fail('실행 실패: ' + j.message);
+    fail('실행 실패 — ' + j.message);
   }
 }
 
 $('run').onclick = async () => {
   show($('error'), false); show($('results'), false);
   const protein = $('protein').value.trim();
-  if (!protein){ fail('단백질 서열을 넣어 주세요.'); return; }
+  if (!protein){ fail('단백질 서열 입력 필요'); return; }
   setBusy(true);
   $('status').textContent = '후보 생성 준비 중';
   $('fill').style.width = '0%';

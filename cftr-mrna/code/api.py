@@ -29,16 +29,9 @@ PRECOMPUTED = ROOT / "results" / "3utr_pas" / "ranking_pas1120_112.csv"
 METRIC_KEYS = ["acc_kozak", "dG_init", "cai", "acc_start30",
                "acc_utr5", "acc_cds", "acc_utr3"]
 
-NOTICES = [
-    # 역치는 2026-10-19에 점수식 바깥으로 빼기로 했으므로 이 안내에서 제외한다. 순위
-    # 산출은 역치와 무관하게 돌아간다. 실제로 단백질이 바뀔 때 걸리는 것은 정규화가
-    # 집단 상대값이라는 점과, 구간 승계 비율이 CFTR의 CDS 길이에서 나왔다는 점이다.
-    "점수는 후보 집단 안에서 min-max로 정규화한 상대값이므로 단백질 사이에 비교할 수 "
-    "없습니다. 전체 접근성의 구간 승계 비율 1:1:2는 CFTR의 CDS 길이 구성에서 정한 "
-    "것이므로, 길이가 크게 다른 단백질에서는 비율을 재검토해야 합니다.",
-    "구간 평균 접근성 지표는 3'UTR의 우열을 변별하지 못하며, 기능 요소(폴리아데닐화 신호) "
-    "제약으로 최소 요건만 거를 수 있습니다. 상위 후보 선정은 나머지 지표가 주도합니다.",
-]
+# 적용 범위 안내(정규화의 집단 상대성, 승계 비율 1:1:2의 CFTR 의존성, 구간 접근성이
+# 3'UTR을 변별하지 못하는 한계)는 화면에 띄우지 않고 보고서에서 다루기로 했다.
+# 2026-10-15의 "결과 화면에 안내 표시" 결정을 2026-10-23에 그렇게 바꾼 것이다.
 
 app = FastAPI(title="CFTR mRNA 역설계")
 _jobs = {}
@@ -102,7 +95,6 @@ def _pack(result, top_n=20):
         "top": top,
         "scores": [round(r["score"], 4) for r in rows],
         "contributions": _contributions(rows[0], weights) if rows else [],
-        "notices": NOTICES,
     }
 
 

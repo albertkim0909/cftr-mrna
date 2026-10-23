@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pydantic
+biopython
+dnachisel
+python_codon_tables
+numpy
+ViennaRNA
